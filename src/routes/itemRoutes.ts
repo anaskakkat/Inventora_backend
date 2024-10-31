@@ -8,7 +8,7 @@ import {
 
 const itemRouter = Router();
 
-itemRouter.route("/items").post(createItem).get(getAllItems);
-itemRouter.route("/items/:itemId").delete(deleteItem).patch(editItems)
+itemRouter.route("/").post(createItem).get(getAllItems);
+itemRouter.route("/:itemId").delete(deleteItem).patch(editItems)
 
 export default itemRouter;

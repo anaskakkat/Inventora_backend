@@ -5,6 +5,7 @@ import connectDB from "./config/db";
 import authRouter from "./routes/authRoutes";
 import itemRouter from "./routes/itemRoutes";
 import morgan from "morgan";
+import customerRouter from "./routes/customerRoutes";
 
 dotenv.config();
 connectDB();
@@ -24,7 +25,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/auth", authRouter);
 app.use("/api/items", itemRouter);
-
+app.use("/api/customer", customerRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
