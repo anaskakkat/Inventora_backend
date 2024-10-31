@@ -34,7 +34,7 @@ export const register = async (
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  console.log("-----body----", req.body);
+  // console.log("-----body----", req.body);
 
   try {
     const user = await User.findOne({ email });
@@ -62,5 +62,17 @@ export const login = async (req: Request, res: Response) => {
     res.status(200).json({ message: "User Login Succesfully", user });
   } catch (error) {
     res.status(500).json({ message: "Error logging in" });
+  }
+};
+
+export const signout = async (req: Request, res: Response) => {
+  console.log("--signout---body----",);
+
+  try {
+    res.clearCookie("token");
+    res.status(200).json({ message: "Successfully logged out" });
+  } catch (error) {
+    console.error("Error in Signout:", error);
+    res.status(500).json({ message: "Error in Signout" });
   }
 };
