@@ -6,6 +6,7 @@ import authRouter from "./routes/authRoutes";
 import itemRouter from "./routes/itemRoutes";
 import morgan from "morgan";
 import customerRouter from "./routes/customerRoutes";
+import saleRouter from "./routes/saleRoutes";
 
 dotenv.config();
 connectDB();
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/items", itemRouter);
 app.use("/api/customer", customerRouter);
+app.use("/api/sale", saleRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>

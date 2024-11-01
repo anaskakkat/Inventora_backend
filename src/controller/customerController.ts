@@ -29,7 +29,7 @@ export const createCustomer = async (req: Request, res: Response) => {
 export const fetchCustomerData = async (req: Request, res: Response) => {
   try {
     const customerData = await Customers.find();
-    if (!customerData)
+    if (!customerData) 
       res.status(400).json({ message: "get Customers failed" });
     res.status(200).json(customerData);
   } catch (error) {
