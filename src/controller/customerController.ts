@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import Customers from "../models/Customers";
+import SaleModel from "../models/Sale";
+import mongoose from "mongoose";
 
 export const createCustomer = async (req: Request, res: Response) => {
   const { name, address, mobile } = req.body;
@@ -29,7 +31,7 @@ export const createCustomer = async (req: Request, res: Response) => {
 export const fetchCustomerData = async (req: Request, res: Response) => {
   try {
     const customerData = await Customers.find();
-    if (!customerData) 
+    if (!customerData)
       res.status(400).json({ message: "get Customers failed" });
     res.status(200).json(customerData);
   } catch (error) {
@@ -96,5 +98,30 @@ export const updateCustomer = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error in updating customer:", error);
     res.status(500).json({ message: "Error updating customer" });
+  }
+};
+
+export const getSalesDatabyCustomerId = async (req: Request, res: Response) => {
+  try {
+    const { customerId } = req.params;
+
+   
+
+    // Convert customerId to ObjectId
+    // const customerObjectId = new mongoose.Types.ObjectId(customerId);
+
+    // Find sales for the given customerId
+    const sales = await SaleModel.find({ customerId });
+
+    if (sales.length === 0) {
+      res.status(404).json({ message: "No sales found for this customer." });
+      return;
+    }
+
+    // Return found sales
+    res.status(200).json(sales);
+  } catch (error) {
+    console.error("Error fetching sales:", error);
+    res.status(500).json({ message: "Internal server error", error });
   }
 };

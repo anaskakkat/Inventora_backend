@@ -1,11 +1,10 @@
 import { Router } from "express";
-import { createSale, fetchSales } from "../controller/saleController";
-
+import { createSale, dashboardData, fetchSales } from "../controller/saleController";
 
 const saleRouter = Router();
 
-saleRouter.route("/").post(createSale).get(fetchSales)
-
-// saleRouter.route("/:itemId").delete(deleteItem).patch(editItems)
+saleRouter.route("/").post(createSale).get(fetchSales);
+saleRouter.route("/").post(createSale).get(fetchSales);
+saleRouter.route("/dashboard").get(dashboardData);
 
 export default saleRouter;

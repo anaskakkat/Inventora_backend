@@ -12,7 +12,7 @@ export interface Sale extends Document {
   date: string;
   items: SaleItem[];
   totalAmount: number;
-  receiptNumber: number;
+  receiptNumber: number; 
 }
 
 const SaleItemSchema: Schema = new Schema({
@@ -23,7 +23,11 @@ const SaleItemSchema: Schema = new Schema({
 });
 
 const SaleSchema: Schema = new Schema({
-  customerId: { type: String, required: true },
+  customerId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    required: true,
+    ref: "Customer",
+  },
   date: { type: String, required: true },
   items: { type: [SaleItemSchema], required: true },
   totalAmount: { type: Number, required: true },
