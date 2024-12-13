@@ -1,27 +1,36 @@
 import { Request, Response } from "express";
 import Customers from "../models/Customers";
 import SaleModel from "../models/Sale";
-import mongoose from "mongoose";
 
 export const createCustomer = async (req: Request, res: Response) => {
   const { name, address, mobile } = req.body;
 
   try {
-    const existingCustomer = await Customers.findOne({
-      name: { $regex: new RegExp(`^${name}$`, "i") },
-    });
-
-    if (existingCustomer) {
-      res
-        .status(400)
-        .json({ message: "Customer with the same name already exists." });
+    const userId = req.userId;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized: User ID not found" });
       return;
     }
 
-    const newCustomer = new Customers({ name, address, mobile });
+    const existingCustomer = await Customers.findOne({
+      name: { $regex: new RegExp(`^${name}$`, "i") },
+      userId,
+    });
+
+    if (existingCustomer) {
+      res.status(400).json({
+        message: "Customer with the same name already exists for this user.",
+      });
+      return;
+    }
+
+    const newCustomer = new Customers({ name, address, mobile, userId });
     await newCustomer.save();
 
-    res.status(201).json({ message: "Customer created successfully" });
+    res.status(201).json({
+      message: "Customer created successfully",
+      customer: newCustomer,
+    });
   } catch (error) {
     console.error("Error in createCustomer:", error);
     res.status(500).json({ message: "Error creating customer" });
@@ -30,7 +39,12 @@ export const createCustomer = async (req: Request, res: Response) => {
 
 export const fetchCustomerData = async (req: Request, res: Response) => {
   try {
-    const customerData = await Customers.find();
+    const userId = req.userId;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized: User ID not found" });
+      return;
+    }
+    const customerData = await Customers.find({ userId });
     if (!customerData)
       res.status(400).json({ message: "get Customers failed" });
     res.status(200).json(customerData);
@@ -104,8 +118,6 @@ export const updateCustomer = async (req: Request, res: Response) => {
 export const getSalesDatabyCustomerId = async (req: Request, res: Response) => {
   try {
     const { customerId } = req.params;
-
-   
 
     // Convert customerId to ObjectId
     // const customerObjectId = new mongoose.Types.ObjectId(customerId);

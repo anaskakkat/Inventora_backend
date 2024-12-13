@@ -5,8 +5,15 @@ export const createItem = async (req: Request, res: Response) => {
   // console.log("--signout---body----", req.body);
   const { name, description, quantity, unit, price } = req.body;
   try {
+    const userId = req.userId;
+    if (!userId) {
+      res.status(403).json({ message: "Unauthorized" });
+      return;
+    }
+
     const existingItem = await Items.findOne({
       name: { $regex: new RegExp(`^${name}$`, "i") },
+      userId,
     });
     if (existingItem) {
       res
@@ -20,6 +27,7 @@ export const createItem = async (req: Request, res: Response) => {
       quantity,
       unit,
       price,
+      userId,
     });
     await newItem.save();
     res.status(201).json({ message: "Item created successfully" });
@@ -31,7 +39,13 @@ export const createItem = async (req: Request, res: Response) => {
 
 export const getAllItems = async (req: Request, res: Response) => {
   try {
-    const allItems = await Items.find();
+    const userId = req.userId;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized: User ID not found" });
+      return;
+    }
+
+    const allItems = await Items.find({ userId });
     if (!allItems) res.status(400).json({ message: "get item failed" });
     res.status(200).json(allItems);
   } catch (error) {
@@ -57,18 +71,25 @@ export const deleteItem = async (req: Request, res: Response) => {
 };
 
 export const editItems = async (req: Request, res: Response) => {
-  // console.log(
-  //   "--signout---body----",
-  //   req.params.itemId,
-  //   "------body------",
-  //   req.body
-  // );
   const { itemId } = req.params;
-
+  const userId = req.userId;
+  if (!userId) {
+    res.status(403).json({ message: "Unauthorized" });
+    return;
+  }
   try {
+    const item = await Items.findOne({ _id: itemId, userId });
+    if (!item) {
+      res
+        .status(404)
+        .json({ message: "Item not found or unauthorized access" });
+      return;
+    }
+
     const existingItem = await Items.findOne({
       name: { $regex: new RegExp(`^${req.body.name}$`, "i") },
       _id: { $ne: itemId },
+      userId,
     });
     if (existingItem) {
       res
@@ -76,9 +97,13 @@ export const editItems = async (req: Request, res: Response) => {
         .json({ message: "Item with the same name already exists." });
       return;
     }
-    const updatedItem = await Items.findByIdAndUpdate(itemId, req.body, {
-      new: true,
-    });
+    const updatedItem = await Items.findByIdAndUpdate(
+      itemId,
+      { ...req.body, userId },
+      {
+        new: true,
+      }
+    );
 
     if (!updatedItem) {
       res.status(404).json({ message: "Item not found" });
@@ -92,5 +117,3 @@ export const editItems = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error updating item" });
   }
 };
-
-

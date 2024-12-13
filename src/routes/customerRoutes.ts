@@ -6,14 +6,21 @@ import {
   getSalesDatabyCustomerId,
   updateCustomer,
 } from "../controller/customerController";
+import { authenticateUser } from "../middleware/authenticateUser ";
 
 const customerRouter = Router();
 
-customerRouter.route("/").post(createCustomer).get(fetchCustomerData);
-customerRouter
-  .route("/:customerId")
+
+// Define routes
+customerRouter.route("/")
+  .post(authenticateUser,createCustomer) 
+  .get(authenticateUser,fetchCustomerData); 
+
+customerRouter.route("/:customerId")
   .delete(deleteCustomer)
   .patch(updateCustomer);
-customerRouter.route("/:customerId/sales").get(getSalesDatabyCustomerId);
+
+customerRouter.route("/:customerId/sales")
+  .get(getSalesDatabyCustomerId);
 
 export default customerRouter;

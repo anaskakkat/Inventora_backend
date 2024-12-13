@@ -10,6 +10,6 @@
     "rootDir": "./src",
     "types": ["node", "express"] // Ensure 'express' is listed here
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts", "src/types.d.ts"],
   "exclude": ["node_modules"]
 }

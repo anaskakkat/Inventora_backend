@@ -7,11 +7,13 @@ import itemRouter from "./routes/itemRoutes";
 import morgan from "morgan";
 import customerRouter from "./routes/customerRoutes";
 import saleRouter from "./routes/saleRoutes";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 connectDB();
 
 const app = express();
+app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -20,7 +22,6 @@ app.use(
 );
 app.use(express.json());
 app.use(morgan("tiny"));
-
 app.get("/", (req, res) => {
   res.send("Server Running");
 });

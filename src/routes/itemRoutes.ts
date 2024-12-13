@@ -5,10 +5,14 @@ import {
   editItems,
   getAllItems,
 } from "../controller/itemController";
+import { authenticateUser } from "../middleware/authenticateUser ";
 
 const itemRouter = Router();
 
-itemRouter.route("/").post(createItem).get(getAllItems);
-itemRouter.route("/:itemId").delete(deleteItem).patch(editItems)
+itemRouter
+  .route("/")
+  .post(authenticateUser, createItem)
+  .get(authenticateUser, getAllItems);
+itemRouter.route("/:itemId").delete(deleteItem).patch(authenticateUser,editItems);
 
 export default itemRouter;
